@@ -5,6 +5,7 @@ class Post < ActiveRecord::Base
   has_many :starred_post_entries, :dependent => :destroy
   has_many :unread_users, :through => :unread_post_entries, :source => :user
   has_many :starred_users, :through => :starred_post_entries, :source => :user
+  has_many :plusone_users, :through => :plusone_post_entries, :source => :user
   before_destroy :kill_parent_id
   
   def as_json(options = {})
@@ -29,6 +30,7 @@ class Post < ActiveRecord::Base
         json[:orphaned] = is_orphaned? && !original_parent
         json[:followup_to] = followup_newsgroup.name if followup_newsgroup
         json[:cross_posts] = (in_all_newsgroups - [self]).map{ |post| post.as_json(:minimal => true) }
+        json[:plusone_by] = plusone_users
       end
     end
     
@@ -38,11 +40,16 @@ class Post < ActiveRecord::Base
       json.merge!(
         :starred => starred_by_user?(options[:with_user]),
         :unread_class => unread_class_for_user(options[:with_user]),
-        :personal_class => personal_class_for_user(options[:with_user])
+        :personal_class => personal_class_for_user(options[:with_user]),
+        :plusoned => plusoned_by_user?(options[:with_user])
       )
     end
     
     return json
+  end
+
+  def plusoned_by_user?(user)
+    plusone_users.include?(user)
   end
   
   def author_name

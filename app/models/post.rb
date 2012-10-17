@@ -3,6 +3,7 @@ class Post < ActiveRecord::Base
   belongs_to :sticky_user, :class_name => 'User'
   has_many :unread_post_entries, :dependent => :destroy
   has_many :starred_post_entries, :dependent => :destroy
+  has_many :plusone_post_entries, :dependent => :destroy
   has_many :unread_users, :through => :unread_post_entries, :source => :user
   has_many :starred_users, :through => :starred_post_entries, :source => :user
   has_many :plusone_users, :through => :plusone_post_entries, :source => :user

@@ -489,10 +489,47 @@ class PostsController < ApplicationController
     end
 
     unless @post.plusoned_by_user?(@current_user)
-      PlusOnePostEntry.create!(:user => @current_user, :post => @post)
+      PlusonePostEntry.create!(:user => @current_user, :post => @post)
 
-      @new_post = Post.create(:newsgroup => @newsgroup, :params => { :body => "+1", :subject => @post.number })
+      @plusoned = true
+
+      post_string = Post.build_message(
+        :user => @current_user,
+        :newsgroups => [ @newsgroup.name ],
+        :subject => @post.subject,
+        :body => "+1",
+        :reply_post => @post,
+        :api_agent => params[:api_agent]
+      )
+      
+      new_message_id = nil
+      begin
+        Net::NNTP.start(NEWS_SERVER) do |nntp|
+          new_message_id = nntp.post(post_string)[1][/<.*?>/]
+        end
+      rescue
+    puts $!.message
+        generic_error :internal_server_error, 'nntp_post_error', 'NNTP server error: ' + $!.message and return
+      end
+      
+      begin
+        Net::NNTP.start(NEWS_SERVER) do |nntp|
+          post_newsgroups.each{ |n| Newsgroup.sync_group!(nntp, n.name, n.status) }
+        end
+        @new_post = @newsgroup.posts.find_by_message_id(new_message_id)
+        if not @new_post
+          @sync_error = "Your post was accepted by the news server, but it appears to have been held for moderation or silently discarded; contact the server administrators before attempting to post again"
+    puts @sync_error
+        end
+      rescue
+        @sync_error = "Your post was accepted by the news server and does not need to be resubmitted, but an error occurred while resyncing the newsgroups: #{$!.message}"
+    puts @sync_error
+      end
     end
+
+    puts new_message_id
+    puts post_string
+    puts @sync_error
 
     respond_to do |wants|
       wants.js {}

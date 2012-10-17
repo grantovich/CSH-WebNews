@@ -11,12 +11,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120901192447) do
+ActiveRecord::Schema.define(:version => 20121017183624) do
 
   create_table "newsgroups", :force => true do |t|
     t.string "name"
     t.string "status"
   end
+
+  create_table "plusone_post_entries", :force => true do |t|
+    t.integer "user_id"
+    t.integer "post_id"
+  end
+
+  add_index "plusone_post_entries", ["user_id", "post_id"], :name => "index_plusone_post_entries_on_user_id_and_post_id", :unique => true
 
   create_table "posts", :force => true do |t|
     t.string   "newsgroup"
@@ -69,12 +76,5 @@ ActiveRecord::Schema.define(:version => 20120901192447) do
   end
 
   add_index "users", ["api_key"], :name => "index_users_on_api_key"
-
-  create_table "plusone_post_entries", :force => true do |t|
-    t.integer "user_id"
-    t.integer "post_id"
-  end
-
-  add_index "plusone_post_entries", ["user_id", "post_id"], :name => "index_plusone_post_entries_on_user_id_and_post_id", :unique => true
 
 end

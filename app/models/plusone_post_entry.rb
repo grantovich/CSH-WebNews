@@ -1,4 +1,4 @@
-class PlusOnePostEntry < ActiveRecord::Base
+class PlusonePostEntry < ActiveRecord::Base
   belongs_to :user
   belongs_to :post
 end

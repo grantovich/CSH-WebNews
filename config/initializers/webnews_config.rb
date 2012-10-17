@@ -1,5 +1,5 @@
 # The news server name, or 'localhost' if using SSH tunneling
-NEWS_SERVER = 'news.csh.rit.edu'
+NEWS_SERVER = 'localhost'
 
 # Users at this domain get the Posts/Profile/Wiki link treatment
 LOCAL_EMAIL_DOMAIN = '@csh.rit.edu'
@@ -28,7 +28,7 @@ INDEX_RSS_LIMIT = 10   # Maximum limit for the built-in search RSS feed
 
 # Set true to enable 'lazy' news syncing without having to install the cron jobs
 # (Note: Does not enable cronless versions of the other cron jobs, see config/schedule.rb)
-CRONLESS_SYNC = false
+CRONLESS_SYNC = true
 
 # Set true to disable authentication and auto-login as a test user with admin privileges
-DEVELOPMENT_MODE = false
+DEVELOPMENT_MODE = true

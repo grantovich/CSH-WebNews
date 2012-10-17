@@ -132,6 +132,17 @@ i { font-style: italic; }
       background-image: url('star-light.png');
     }
   }
+
+  &#plusone_post_button {
+    border-color: #c00;
+    background-color: $bg_light;
+
+    &.plusoned, &:hover, &.plusoned:hover {
+      border-color: #c00;
+      background-color: #c00;
+      color: $bg_light;
+    }
+  }
 }
 
 .buttons {

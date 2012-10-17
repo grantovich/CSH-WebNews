@@ -508,7 +508,6 @@ class PostsController < ApplicationController
           new_message_id = nntp.post(post_string)[1][/<.*?>/]
         end
       rescue
-    puts $!.message
         generic_error :internal_server_error, 'nntp_post_error', 'NNTP server error: ' + $!.message and return
       end
       
@@ -519,17 +518,11 @@ class PostsController < ApplicationController
         @new_post = @newsgroup.posts.find_by_message_id(new_message_id)
         if not @new_post
           @sync_error = "Your post was accepted by the news server, but it appears to have been held for moderation or silently discarded; contact the server administrators before attempting to post again"
-    puts @sync_error
         end
       rescue
         @sync_error = "Your post was accepted by the news server and does not need to be resubmitted, but an error occurred while resyncing the newsgroups: #{$!.message}"
-    puts @sync_error
       end
     end
-
-    puts new_message_id
-    puts post_string
-    puts @sync_error
 
     respond_to do |wants|
       wants.js {}

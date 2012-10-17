@@ -70,4 +70,11 @@ ActiveRecord::Schema.define(:version => 20120901192447) do
 
   add_index "users", ["api_key"], :name => "index_users_on_api_key"
 
+  create_table "plusone_post_entries", :force => true do |t|
+    t.integer "user_id"
+    t.integer "post_id"
+  end
+
+  add_index "plusone_post_entries", ["user_id", "post_id"], :name => "index_plusone_post_entries_on_user_id_and_post_id", :unique => true
+
 end

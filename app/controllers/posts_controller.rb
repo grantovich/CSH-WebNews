@@ -482,6 +482,23 @@ class PostsController < ApplicationController
       wants.json { render :json => { :starred => @starred } }
     end
   end
+
+  def update_plusone
+    if @post.nil?
+      @plusone_error = "The post you are trying to +1 doesn't exist" and return
+    end
+
+    unless @post.plusoned_by_user?(@current_user)
+      PlusOnePostEntry.create!(:user => @current_user, :post => @post)
+
+      @new_post = Post.create(:newsgroup => @newsgroup, :params => { :body => "+1", :subject => @post.number })
+    end
+
+    respond_to do |wants|
+      wants.js {}
+      wants.json { render :json => { :plusoned => @plusoned } }
+    end
+  end
   
   private
     

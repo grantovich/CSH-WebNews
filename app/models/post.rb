@@ -406,6 +406,9 @@ class Post < ActiveRecord::Base
     elsif parent # Parent exists and is in the same newsgroup
       thread_id = parent.thread_id
     end
+
+    hidden = false
+    hidden = headers[/^X-WebNews-Hidden: (.*)/i, 1] == "True"
     
     create!(:newsgroup => newsgroup,
             :number => number,
@@ -417,7 +420,8 @@ class Post < ActiveRecord::Base
             :thread_id => thread_id,
             :stripped => stripped,
             :headers => headers,
-            :body => body)
+            :body => body,
+            :hidden => hidden)
   end
   
   # See RFC 3676 for "format=flowed" spec

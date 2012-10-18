@@ -149,19 +149,19 @@ class Post < ActiveRecord::Base
   end
   
   def parent
-    parent_id == '' ? nil : Post.where(:message_id => parent_id, :newsgroup => newsgroup.name).first
+    parent_id == '' ? nil : Post.where(:hidden => false, :message_id => parent_id, :newsgroup => newsgroup.name).first
   end
   
   def children
-    Post.where(:parent_id => message_id, :newsgroup => newsgroup.name).order('date')
+    Post.where(:hidden => false, :parent_id => message_id, :newsgroup => newsgroup.name).order('date')
   end
   
   def thread_parent
-    message_id == thread_id ? self : Post.where(:message_id => thread_id, :newsgroup => newsgroup.name).first
+    message_id == thread_id ? self : Post.where(:hidden => false, :message_id => thread_id, :newsgroup => newsgroup.name).first
   end
   
   def all_in_thread
-    Post.where(:thread_id => thread_id, :newsgroup => newsgroup.name).order('date')
+    Post.where(:hidden => false, :thread_id => thread_id, :newsgroup => newsgroup.name).order('date')
   end
   
   def thread_tree_for_user(user, flatten = false, as_json = false, all_posts = nil)

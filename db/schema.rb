@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(:version => 20121017183624) do
     t.datetime "sticky_until"
     t.text     "headers"
     t.text     "body"
+    t.boolean  "hidden"
   end
 
   add_index "posts", ["date"], :name => "index_posts_on_date"

@@ -129,6 +129,11 @@ end
       WebNews stripped one or more attachments from this message.
     </div>
   <% end %>
+  <% if post.plusoned > 0 %>
+    <div class="notice">
+      <span class="icon">+<%= post.plusoned %></span> by <%= post.plusone_users_names.join(', ') %>
+    </div>
+  <% end %>
 </div>
 
 <div class="content" tabindex="-1">

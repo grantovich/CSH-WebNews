@@ -49,8 +49,18 @@ class Post < ActiveRecord::Base
     return json
   end
 
+  def plusoned
+    plusone_users.count
+  end
+
   def plusoned_by_user?(user)
     plusone_users.include?(user)
+  end
+
+  def plusone_users_names
+    plusone_users.map do |user|
+      user.real_name
+    end
   end
   
   def author_name

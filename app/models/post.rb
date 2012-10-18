@@ -313,6 +313,12 @@ class Post < ActiveRecord::Base
     else
       m += "\nUser-Agent: CSH-WebNews"
     end
+
+    if p[:custom_headers]
+      p[:custom_headers].keys.each do |header|
+        m += "\nX-WebNews-#{header}: #{p[:custom_headers][header]}"
+      end
+    end
     
     m += "\n\n#{flowed_encode(p[:body].rstrip)}\n"
     return m

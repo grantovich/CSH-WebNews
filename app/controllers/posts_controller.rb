@@ -499,7 +499,8 @@ class PostsController < ApplicationController
         :subject => @post.subject,
         :body => "+1",
         :reply_post => @post,
-        :api_agent => params[:api_agent]
+        :api_agent => params[:api_agent],
+        :custom_headers => { :Hidden => "True" }
       )
       
       new_message_id = nil

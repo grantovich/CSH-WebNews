@@ -279,6 +279,10 @@ $('#star_post_button').live 'click', ->
   $.ajaxScript 'PUT', @href.replace('#~/', '')
   return false
 
+$('#plusone_post_button').live 'click', ->
+  $.ajaxScript 'PUT', @href.replace('#~/', '')
+  return false
+
 $('a.update_api_settings').live 'click', ->
   $('#update_api_buttons').text('Working...')
   $.ajaxScript 'PUT', @href.replace('#~/', '')

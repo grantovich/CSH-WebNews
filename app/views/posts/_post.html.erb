@@ -43,6 +43,9 @@ end
     <a id="star_post_button" title="Star this post"
       class="button<%= post.starred_by_user?(@current_user) ? ' starred' : '' %>"
       href="#~<%= update_post_star_path(:newsgroup => @newsgroup.name, :number => post.number) %>">&nbsp;</a>
+    <a id="plusone_post_button" title="+1"
+      class="button<%= post.plusoned_by_user?(@current_user) ? ' plusoned' : '' %>"
+      href="#~<%= update_post_plusone_path(:newsgroup => @newsgroup.name, :number => post.number) %>">+1</a>
   </div>
 
   <h3><%= post.subject %></h3>
@@ -124,6 +127,11 @@ end
     <div class="notice">
       <span class="icon">!</span>
       WebNews stripped one or more attachments from this message.
+    </div>
+  <% end %>
+  <% if post.plusoned > 0 %>
+    <div class="notice">
+      <span class="icon">+<%= post.plusoned %></span> by <%= post.plusone_users_names.join(', ') %>
     </div>
   <% end %>
 </div>

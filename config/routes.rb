@@ -32,6 +32,7 @@ Webnews::Application.routes.draw do
     get '/:newsgroup/:number/sticky', :to => 'posts#edit_sticky',     :as => :edit_post_sticky
     put '/:newsgroup/:number/sticky', :to => 'posts#update_sticky',   :as => :update_post_sticky
     put '/:newsgroup/:number/star',   :to => 'posts#update_star',     :as => :update_post_star
+    put '/:newsgroup/:number/+1',     :to => 'posts#update_plusone',  :as => :update_post_plusone
     delete '/:newsgroup/:number',     :to => 'posts#destroy',         :as => :destroy_post
     get '/:newsgroup/:number/cancel', :to => 'posts#destroy_confirm', :as => :confirm_destroy_post
   end

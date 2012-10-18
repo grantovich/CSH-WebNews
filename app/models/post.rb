@@ -3,8 +3,10 @@ class Post < ActiveRecord::Base
   belongs_to :sticky_user, :class_name => 'User'
   has_many :unread_post_entries, :dependent => :destroy
   has_many :starred_post_entries, :dependent => :destroy
+  has_many :plusone_post_entries, :dependent => :destroy
   has_many :unread_users, :through => :unread_post_entries, :source => :user
   has_many :starred_users, :through => :starred_post_entries, :source => :user
+  has_many :plusone_users, :through => :plusone_post_entries, :source => :user
   before_destroy :kill_parent_id
   
   def as_json(options = {})
@@ -29,6 +31,7 @@ class Post < ActiveRecord::Base
         json[:orphaned] = is_orphaned? && !original_parent
         json[:followup_to] = followup_newsgroup.name if followup_newsgroup
         json[:cross_posts] = (in_all_newsgroups - [self]).map{ |post| post.as_json(:minimal => true) }
+        json[:plusone_by] = plusone_users
       end
     end
     
@@ -38,11 +41,26 @@ class Post < ActiveRecord::Base
       json.merge!(
         :starred => starred_by_user?(options[:with_user]),
         :unread_class => unread_class_for_user(options[:with_user]),
-        :personal_class => personal_class_for_user(options[:with_user])
+        :personal_class => personal_class_for_user(options[:with_user]),
+        :plusoned => plusoned_by_user?(options[:with_user])
       )
     end
     
     return json
+  end
+
+  def plusoned
+    plusone_users.count
+  end
+
+  def plusoned_by_user?(user)
+    plusone_users.include?(user)
+  end
+
+  def plusone_users_names
+    plusone_users.map do |user|
+      user.real_name
+    end
   end
   
   def author_name
@@ -141,19 +159,19 @@ class Post < ActiveRecord::Base
   end
   
   def parent
-    parent_id == '' ? nil : Post.where(:message_id => parent_id, :newsgroup => newsgroup.name).first
+    parent_id == '' ? nil : Post.where(:hidden => false, :message_id => parent_id, :newsgroup => newsgroup.name).first
   end
   
   def children
-    Post.where(:parent_id => message_id, :newsgroup => newsgroup.name).order('date')
+    Post.where(:hidden => false, :parent_id => message_id, :newsgroup => newsgroup.name).order('date')
   end
   
   def thread_parent
-    message_id == thread_id ? self : Post.where(:message_id => thread_id, :newsgroup => newsgroup.name).first
+    message_id == thread_id ? self : Post.where(:hidden => false, :message_id => thread_id, :newsgroup => newsgroup.name).first
   end
   
   def all_in_thread
-    Post.where(:thread_id => thread_id, :newsgroup => newsgroup.name).order('date')
+    Post.where(:hidden => false, :thread_id => thread_id, :newsgroup => newsgroup.name).order('date')
   end
   
   def thread_tree_for_user(user, flatten = false, as_json = false, all_posts = nil)
@@ -305,6 +323,12 @@ class Post < ActiveRecord::Base
     else
       m += "\nUser-Agent: CSH-WebNews"
     end
+
+    if p[:custom_headers]
+      p[:custom_headers].keys.each do |header|
+        m += "\nX-WebNews-#{header}: #{p[:custom_headers][header]}"
+      end
+    end
     
     m += "\n\n#{flowed_encode(p[:body].rstrip)}\n"
     return m
@@ -392,6 +416,9 @@ class Post < ActiveRecord::Base
     elsif parent # Parent exists and is in the same newsgroup
       thread_id = parent.thread_id
     end
+
+    hidden = false
+    hidden = headers[/^X-WebNews-Hidden: (.*)/i, 1] == "True"
     
     create!(:newsgroup => newsgroup,
             :number => number,
@@ -403,7 +430,8 @@ class Post < ActiveRecord::Base
             :thread_id => thread_id,
             :stripped => stripped,
             :headers => headers,
-            :body => body)
+            :body => body,
+            :hidden => hidden)
   end
   
   # See RFC 3676 for "format=flowed" spec

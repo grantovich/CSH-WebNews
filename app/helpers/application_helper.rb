@@ -123,4 +123,7 @@ module ApplicationHelper
     return html_body
   end
 
+  def email_hash(email)
+    Digest::MD5.hexdigest(email.gsub(/\s+/, "").downcase)
+  end
 end

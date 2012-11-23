@@ -124,6 +124,6 @@ module ApplicationHelper
   end
 
   def email_hash(email)
-    Digest::MD5.hexdigest(email.gsub(/\s+/, "").downcase)
+    "https://secure.gravatar.com/avatar/" + Digest::MD5.hexdigest(email.gsub(/\s+/, "").downcase) + "?s=40&d=mm&r=pg"
   end
 end

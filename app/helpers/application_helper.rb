@@ -123,4 +123,7 @@ module ApplicationHelper
     return html_body
   end
 
+  def gravatar_uri(email)
+    "https://secure.gravatar.com/avatar/" + Digest::MD5.hexdigest(email.gsub(/\s+/, "").downcase) + "?s=40&d=mm&r=pg"
+  end
 end

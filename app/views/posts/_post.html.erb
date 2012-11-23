@@ -7,7 +7,6 @@ if post.is_crossposted?
   }
 end
 %>
-
 <div id="post_header"<% if post.is_sticky? %> class="sticky"<% end %>>
   <div class="buttons">
     <% if post.is_sticky? %>
@@ -46,7 +45,7 @@ end
       class="button<%= post.starred_by_user?(@current_user) ? ' starred' : '' %>"
       href="#~<%= update_post_star_path(:newsgroup => @newsgroup.name, :number => post.number) %>">&nbsp;</a>
   </div>
-
+  <img class="gravatar" src="<%=gravatar_uri(post.author_email)%>">
   <h3><%= post.subject %></h3>
   <div class="byline">
     <span class="author">

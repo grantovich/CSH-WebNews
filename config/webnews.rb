@@ -9,7 +9,7 @@ NEWS_SERVER = 'news.csh.rit.edu'
 LOCAL_DOMAIN = 'csh.rit.edu'
 
 # URL prefixes for the Profile and Wiki links
-PROFILES_URL = 'https://members.csh.rit.edu/profiles/members/'
+PROFILES_URL = 'https://profiles.csh.rit.edu/user/'
 WIKI_URL = 'https://wiki.csh.rit.edu/wiki/'
 WIKI_USER_URL = WIKI_URL + 'User:'
 

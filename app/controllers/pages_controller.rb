@@ -47,6 +47,10 @@ class PagesController < ApplicationController
     render 'shared/dialog'
   end
 
+  def status
+    render 'shared/dialog'
+  end
+
   def new_user
     render 'shared/dialog'
   end

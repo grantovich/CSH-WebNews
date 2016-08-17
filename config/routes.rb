@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get '/check_new', to: 'pages#check_new'
 
   get '/about',       to: 'pages#about'
+  get '/status',      to: 'pages#status'
   get '/new_user',    to: 'pages#new_user'
   get '/old_user',    to: 'pages#old_user'
   get '/rss_caution', to: 'pages#rss_caution'
